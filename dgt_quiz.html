@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🚗 Test DGT – Simulador Oficial del Examen Teórico</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0e1a;
+      --surface: #121828;
+      --card: #1a2235;
+      --border: #2a3550;
+      --primary: #4f8ef7;
+      --primary-glow: rgba(79,142,247,0.25);
+      --success: #22c55e;
+      --success-bg: rgba(34,197,94,0.15);
+      --danger: #ef4444;
+      --danger-bg: rgba(239,68,68,0.15);
+      --warn: #f59e0b;
+      --warn-bg: rgba(245,158,11,0.15);
+      --text: #e2e8f0;
+      --text-muted: #7a8ba5;
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* ── HEADER ── */
+    header {
+      width: 100%;
+      background: linear-gradient(135deg, #0f1e3d 0%, #162b58 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 32px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+    header .logo { font-size: 2rem; }
+    header h1 { font-size: 1.25rem; font-weight: 700; color: #fff; }
+    header p  { font-size: 0.78rem; color: var(--text-muted); }
+    header .badge {
+      margin-left: auto;
+      background: var(--primary);
+      color: #fff;
+      padding: 4px 12px;
+      border-radius: 99px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    /* ── MAIN WRAPPER ── */
+    main {
+      width: 100%;
+      max-width: 860px;
+      padding: 32px 20px 60px;
+    }
+
+    /* ── SCREEN: HOME ── */
+    #screen-home { display: flex; flex-direction: column; align-items: center; gap: 28px; }
+
+    .hero-card {
+      background: linear-gradient(135deg, #162b58 0%, #1a2235 100%);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 48px 40px;
+      text-align: center;
+      width: 100%;
+    }
+    .hero-card .icon { font-size: 4rem; margin-bottom: 16px; display: block; }
+    .hero-card h2 { font-size: 2rem; font-weight: 800; margin-bottom: 8px; }
+    .hero-card p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; max-width: 520px; margin: 0 auto 28px; }
+
+    .stats-row {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 32px;
+    }
+    .stat-pill {
+      background: rgba(79,142,247,0.12);
+      border: 1px solid rgba(79,142,247,0.3);
+      border-radius: 99px;
+      padding: 8px 20px;
+      font-size: 0.85rem;
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+      width: 100%;
+    }
+    .cat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 20px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cat-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--primary-glow);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .cat-card:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.3); }
+    .cat-card:hover::before { opacity: 1; }
+    .cat-card.active { border-color: var(--primary); background: rgba(79,142,247,0.1); }
+    .cat-card .ci { font-size: 2.2rem; margin-bottom: 10px; display: block; }
+    .cat-card h3 { font-size: 0.95rem; font-weight: 600; margin-bottom: 4px; }
+    .cat-card span { font-size: 0.78rem; color: var(--text-muted); }
+
+    .mode-row {
+      display: flex;
+      gap: 12px;
+      width: 100%;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .mode-btn {
+      flex: 1;
+      min-width: 150px;
+      padding: 14px 20px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--card);
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+      color: var(--text);
+    }
+    .mode-btn:hover { border-color: var(--primary); }
+    .mode-btn.active { border-color: var(--primary); background: rgba(79,142,247,0.12); color: var(--primary); }
+    .mode-btn .mi { font-size: 1.4rem; margin-bottom: 4px; display: block; }
+    .mode-btn h4 { font-size: 0.85rem; font-weight: 600; }
+    .mode-btn p  { font-size: 0.75rem; color: var(--text-muted); }
+
+    .btn-start {
+      width: 100%;
+      padding: 18px;
+      border-radius: var(--radius);
+      border: none;
+      background: linear-gradient(135deg, #3b82f6, #6366f1);
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 20px rgba(79,142,247,0.4);
+    }
+    .btn-start:hover { transform: translateY(-1px); box-shadow: 0 8px 30px rgba(79,142,247,0.5); }
+    .btn-start:active { transform: translateY(0); }
+
+    /* ── SCREEN: QUIZ ── */
+    #screen-quiz { display: none; }
+
+    .quiz-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .quiz-back {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 16px;
+      border-radius: 99px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+    .quiz-back:hover { border-color: var(--primary); color: var(--primary); }
+
+    .progress-bar-wrap {
+      flex: 1;
+      background: var(--card);
+      border-radius: 99px;
+      height: 8px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #3b82f6, #6366f1);
+      border-radius: 99px;
+      transition: width 0.4s ease;
+    }
+
+    .quiz-counter {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .score-row {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .score-chip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      padding: 6px 14px;
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+    .score-chip.correct { border-color: var(--success); color: var(--success); background: var(--success-bg); }
+    .score-chip.wrong   { border-color: var(--danger);  color: var(--danger);  background: var(--danger-bg);  }
+    .score-chip.time    { border-color: var(--warn);    color: var(--warn);    background: var(--warn-bg);    }
+
+    .question-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px;
+      margin-bottom: 20px;
+    }
+    .question-category {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 14px;
+    }
+    .question-text {
+      font-size: 1.15rem;
+      font-weight: 600;
+      line-height: 1.6;
+      color: #fff;
+    }
+
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .option-btn {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      cursor: pointer;
+      text-align: left;
+      font-size: 0.95rem;
+      color: var(--text);
+      transition: all 0.18s;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-family: 'Inter', sans-serif;
+    }
+    .option-btn .opt-key {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.07);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+    .option-btn:not(.answered):hover {
+      border-color: var(--primary);
+      background: rgba(79,142,247,0.08);
+    }
+    .option-btn.correct  { border-color: var(--success); background: var(--success-bg); color: #fff; }
+    .option-btn.wrong    { border-color: var(--danger);  background: var(--danger-bg);  color: #fff; }
+    .option-btn.skipped  { border-color: var(--border);  opacity: 0.5; }
+    .option-btn.correct .opt-key { background: var(--success); color: #fff; }
+    .option-btn.wrong   .opt-key { background: var(--danger);  color: #fff; }
+
+    .explanation {
+      background: rgba(79,142,247,0.08);
+      border: 1px solid rgba(79,142,247,0.3);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      margin-top: 16px;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: var(--text);
+      display: none;
+    }
+    .explanation strong { color: var(--primary); }
+
+    .next-btn {
+      width: 100%;
+      padding: 16px;
+      border-radius: var(--radius);
+      border: none;
+      background: linear-gradient(135deg, #3b82f6, #6366f1);
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: none;
+      margin-top: 20px;
+      box-shadow: 0 4px 16px rgba(79,142,247,0.35);
+    }
+    .next-btn:hover { transform: translateY(-1px); }
+
+    /* ── SCREEN: RESULT ── */
+    #screen-result { display: none; text-align: center; }
+
+    .result-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 48px 40px;
+      margin-bottom: 24px;
+    }
+    .result-icon { font-size: 5rem; display: block; margin-bottom: 20px; }
+    .result-title { font-size: 2rem; font-weight: 800; margin-bottom: 8px; }
+    .result-subtitle { color: var(--text-muted); font-size: 1rem; margin-bottom: 32px; }
+
+    .result-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .result-stat {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+    .result-stat .val { font-size: 2rem; font-weight: 800; margin-bottom: 4px; }
+    .result-stat .lbl { font-size: 0.78rem; color: var(--text-muted); }
+    .result-stat.c .val { color: var(--success); }
+    .result-stat.e .val { color: var(--danger); }
+    .result-stat.s .val { color: var(--primary); }
+
+    .score-bar-wrap {
+      background: var(--surface);
+      border-radius: 99px;
+      height: 14px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+    .score-bar-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--danger), var(--warn), var(--success));
+      transition: width 1s ease 0.3s;
+    }
+    .score-pct { font-size: 2.5rem; font-weight: 800; margin-bottom: 4px; }
+    .verdict { font-size: 1rem; font-weight: 700; margin-bottom: 32px; }
+    .verdict.pass { color: var(--success); }
+    .verdict.fail { color: var(--danger); }
+
+    .review-list { text-align: left; }
+    .review-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      margin-bottom: 10px;
+      font-size: 0.88rem;
+    }
+    .review-item .ri-q { font-weight: 600; margin-bottom: 6px; color: #fff; }
+    .review-item .ri-a { color: var(--success); margin-bottom: 2px; }
+    .review-item .ri-y { color: var(--danger); }
+    .review-header { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin: 24px 0 12px; }
+
+    .btn-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+    .btn-sec, .btn-prim {
+      padding: 14px 28px;
+      border-radius: var(--radius);
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-sec  { background: var(--card); border: 1px solid var(--border); color: var(--text); }
+    .btn-sec:hover  { border-color: var(--primary); color: var(--primary); }
+    .btn-prim { background: linear-gradient(135deg, #3b82f6, #6366f1); border: none; color: #fff; box-shadow: 0 4px 16px rgba(79,142,247,0.35); }
+    .btn-prim:hover { transform: translateY(-1px); }
+
+    /* Timer ring */
+    .timer-wrap {
+      position: relative;
+      width: 56px; height: 56px;
+      margin-left: auto;
+    }
+    .timer-svg { transform: rotate(-90deg); }
+    .timer-bg  { fill: none; stroke: var(--border); stroke-width: 4; }
+    .timer-fg  { fill: none; stroke: var(--primary); stroke-width: 4; stroke-linecap: round; transition: stroke-dashoffset 1s linear, stroke 0.3s; }
+    .timer-txt {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem; font-weight: 700;
+    }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-in { animation: fadeIn 0.3s ease; }
+
+    @media (max-width: 520px) {
+      .result-stats { grid-template-columns: 1fr 1fr; }
+      .hero-card { padding: 32px 20px; }
+      .question-card { padding: 20px; }
+      header h1 { font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">🚗</div>
+  <div>
+    <h1>Simulador Examen DGT</h1>
+    <p>Permiso B · Basado en normativa oficial 2026</p>
+  </div>
+  <div class="badge">DGT 2026</div>
+</header>
+
+<main>
+
+  <!-- HOME SCREEN -->
+  <div id="screen-home">
+    <div class="hero-card">
+      <span class="icon">🏁</span>
+      <h2>Test Oficial DGT</h2>
+      <p>Pon a prueba tus conocimientos sobre la normativa vial española. Más de 100 preguntas extraídas de exámenes reales, actualizadas con los cambios de 2026.</p>
+      <div class="stats-row">
+        <div class="stat-pill">📝 30 preguntas por test</div>
+        <div class="stat-pill">⏱ 30 minutos</div>
+        <div class="stat-pill">❌ Máx. 3 fallos</div>
+        <div class="stat-pill">✅ Normativa 2026</div>
+      </div>
+    </div>
+
+    <div style="width:100%">
+      <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;">📂 Categorías</p>
+      <div class="category-grid" id="cat-grid"></div>
+    </div>
+
+    <div style="width:100%">
+      <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;">⚙️ Modo de juego</p>
+      <div class="mode-row">
+        <div class="mode-btn active" data-mode="exam" onclick="selectMode(this)">
+          <span class="mi">📝</span>
+          <h4>Examen oficial</h4>
+          <p>30 pregs · 30 min</p>
+        </div>
+        <div class="mode-btn" data-mode="practice" onclick="selectMode(this)">
+          <span class="mi">🧠</span>
+          <h4>Práctica libre</h4>
+          <p>Sin límite de tiempo</p>
+        </div>
+        <div class="mode-btn" data-mode="blitz" onclick="selectMode(this)">
+          <span class="mi">⚡</span>
+          <h4>Blitz</h4>
+          <p>10 pregs · 20 seg c/u</p>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-start" onclick="startGame()">🚀 Comenzar test</button>
+  </div>
+
+  <!-- QUIZ SCREEN -->
+  <div id="screen-quiz">
+    <div class="quiz-header">
+      <button class="quiz-back" onclick="goHome()">← Salir</button>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="prog-bar" style="width:0%"></div>
+      </div>
+      <span class="quiz-counter" id="quiz-counter">1 / 30</span>
+      <div class="timer-wrap" id="timer-wrap" style="display:none">
+        <svg class="timer-svg" width="56" height="56" viewBox="0 0 56 56">
+          <circle class="timer-bg" cx="28" cy="28" r="24"/>
+          <circle class="timer-fg" id="timer-ring" cx="28" cy="28" r="24" stroke-dasharray="150.8" stroke-dashoffset="0"/>
+        </svg>
+        <div class="timer-txt" id="timer-txt">30</div>
+      </div>
+    </div>
+
+    <div class="score-row">
+      <div class="score-chip correct">✓ <span id="sc-correct">0</span></div>
+      <div class="score-chip wrong">✗ <span id="sc-wrong">0</span></div>
+    </div>
+
+    <div class="question-card fade-in" id="question-card">
+      <div class="question-category" id="q-category"></div>
+      <div class="question-text" id="q-text"></div>
+    </div>
+
+    <div class="options-list" id="options-list"></div>
+    <div class="explanation" id="explanation"></div>
+    <button class="next-btn" id="next-btn" onclick="nextQuestion()">Siguiente pregunta →</button>
+  </div>
+
+  <!-- RESULT SCREEN -->
+  <div id="screen-result">
+    <div class="result-card">
+      <span class="result-icon" id="res-icon">🏆</span>
+      <div class="result-title" id="res-title">¡Aprobado!</div>
+      <div class="result-subtitle" id="res-sub">Has superado el examen teórico DGT</div>
+
+      <div class="score-pct" id="res-pct">90%</div>
+      <div class="score-bar-wrap">
+        <div class="score-bar-fill" id="res-bar" style="width:0%"></div>
+      </div>
+      <div class="verdict" id="res-verdict"></div>
+
+      <div class="result-stats">
+        <div class="result-stat c">
+          <div class="val" id="res-corr">0</div>
+          <div class="lbl">Correctas</div>
+        </div>
+        <div class="result-stat e">
+          <div class="val" id="res-err">0</div>
+          <div class="lbl">Errores</div>
+        </div>
+        <div class="result-stat s">
+          <div class="val" id="res-pct2">0%</div>
+          <div class="lbl">Puntuación</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="review-list" id="review-list"></div>
+
+    <div class="btn-row" style="margin-top:24px">
+      <button class="btn-sec" onclick="goHome()">🏠 Inicio</button>
+      <button class="btn-prim" onclick="startGame()">🔄 Repetir test</button>
+    </div>
+  </div>
+
+</main>
+
+<script>
+// ─── DATA ────────────────────────────────────────────────────────────────────
+const CATEGORIES = [
+  { id: 'senales',    label: 'Señales de tráfico',   icon: '🚦' },
+  { id: 'velocidad',  label: 'Velocidad y distancias', icon: '🏎️' },
+  { id: 'prioridad',  label: 'Prioridad de paso',    icon: '⚠️' },
+  { id: 'puntos',     label: 'Sistema de puntos',    icon: '⭐' },
+  { id: 'alcohol',    label: 'Alcohol y drogas',     icon: '🍺' },
+  { id: 'examen',     label: 'Examen DGT',           icon: '📋' },
+  { id: 'normativa',  label: 'Normativa 2026',       icon: '📜' },
+  { id: 'seguridad',  label: 'Seguridad vial',       icon: '🛡️' },
+];
+
+const QUESTIONS = [
+  // ── SEÑALES ──
+  { cat:'senales', q:'¿Cuál es el orden correcto de prioridad de las señales de tráfico?', opts:['Semáforos, agentes, señales verticales, marcas viales','Agentes, señalización circunstancial, semáforos, señales verticales, marcas viales','Marcas viales, señales verticales, semáforos, agentes'], ans:1, tip:'El orden de prioridad es: 1º Agentes, 2º Señalización circunstancial y balizamiento, 3º Semáforos, 4º Señales verticales, 5º Marcas viales.' },
+  { cat:'senales', q:'¿Qué forma tienen las señales de advertencia de peligro?', opts:['Circular con borde rojo','Triangular con borde rojo','Rectangular azul'], ans:1, tip:'Las señales de advertencia de peligro son triangulares con borde rojo e indican la proximidad de un riesgo.' },
+  { cat:'senales', q:'¿Qué indica una señal circular azul?', opts:['Prohibición','Obligación','Información'], ans:1, tip:'Las señales circulares azules indican obligaciones para el conductor.' },
+  { cat:'senales', q:'¿Qué tipo de señal es generalmente rectangular y azul?', opts:['De peligro','De reglamentación','De indicación'], ans:2, tip:'Las señales de indicación son generalmente rectangulares y azules, y proporcionan información sobre la vía y servicios.' },
+  { cat:'senales', q:'Si dos señales del mismo tipo parecen contradecirse, ¿cuál prevalece?', opts:['La más reciente','La más restrictiva','La más visible'], ans:1, tip:'En caso de contradicción entre señales del mismo tipo, prevalece siempre la más restrictiva.' },
+  { cat:'senales', q:'¿Qué es la señal V-16?', opts:['Una señal de stop especial','Un dispositivo luminoso amarillo con geolocalización que preseñaliza peligro','Una marca vial para carriles VAO'], ans:1, tip:'La señal V-16 es un dispositivo luminoso de color amarillo autoalimentado con geolocalización obligatorio desde el 1 de enero de 2026, que sustituye a los triángulos de emergencia.' },
+  { cat:'senales', q:'La señal V-16, ¿desde cuándo es obligatoria?', opts:['Desde 2024','Desde el 1 de enero de 2026','Aún no es obligatoria'], ans:1, tip:'La señal V-16 pasó a ser obligatoria a partir del 1 de enero de 2026.' },
+  { cat:'senales', q:'Una señal circular con borde rojo indica:', opts:['Obligación','Limitación o prohibición','Información de servicios'], ans:1, tip:'Las señales circulares con borde rojo indican limitaciones o prohibiciones.' },
+
+  // ── VELOCIDAD ──
+  { cat:'velocidad', q:'¿Cuál es la velocidad máxima en autopistas y autovías para turismos?', opts:['100 km/h','110 km/h','120 km/h'], ans:2, tip:'La velocidad máxima genérica en autopistas y autovías es de 120 km/h para turismos y motocicletas.' },
+  { cat:'velocidad', q:'¿Cuál es la velocidad mínima en autopistas y autovías?', opts:['40 km/h','60 km/h','80 km/h'], ans:1, tip:'La velocidad mínima en autopistas y autovías es de 60 km/h.' },
+  { cat:'velocidad', q:'¿Cuál es la velocidad máxima en carreteras convencionales para turismos?', opts:['80 km/h','90 km/h','100 km/h'], ans:1, tip:'La velocidad máxima en carreteras convencionales es de 90 km/h.' },
+  { cat:'velocidad', q:'En una calle urbana de un solo carril por sentido, ¿cuál es el límite de velocidad?', opts:['20 km/h','25 km/h','30 km/h'], ans:1, tip:'En calles urbanas de un solo carril por sentido, el límite es de 25 km/h.' },
+  { cat:'velocidad', q:'En una plataforma única (sin bordillo), ¿cuál es el límite de velocidad en zona urbana?', opts:['10 km/h','20 km/h','30 km/h'], ans:1, tip:'En plataformas de única cota (sin bordillo), el límite es de 20 km/h.' },
+  { cat:'velocidad', q:'En 2026, al adelantar a un ciclista, ¿cuánto debes reducir la velocidad respecto al límite?', opts:['10 km/h','20 km/h','30 km/h'], ans:1, tip:'Desde 2026 será obligatorio reducir la velocidad en al menos 20 km/h por debajo del límite al adelantar ciclistas o vehículos detenidos.' },
+  { cat:'velocidad', q:'¿Cuál es la velocidad máxima en autovías dentro de poblado?', opts:['60 km/h','80 km/h','100 km/h'], ans:1, tip:'En autovías dentro de poblado, la velocidad máxima es de 80 km/h.' },
+  { cat:'velocidad', q:'La distancia de seguridad fuera de poblado debe permitir:', opts:['Solo frenar sin colisionar','Frenar sin colisionar y que otros puedan adelantar si no está prohibido','Frenar en 50 metros'], ans:1, tip:'Fuera de poblado, la distancia de seguridad debe permitir frenar y además que los vehículos de detrás puedan adelantar con seguridad (salvo prohibición o saturación de tráfico).' },
+
+  // ── PRIORIDAD ──
+  { cat:'prioridad', q:'En una intersección sin señalizar, ¿quién tiene prioridad?', opts:['El vehículo más grande','El vehículo que viene por la derecha','El vehículo que lleva más tiempo esperando'], ans:1, tip:'En intersecciones sin señalizar, la norma general otorga prioridad a los vehículos que se aproximan por la derecha.' },
+  { cat:'prioridad', q:'Un vehículo que circula por una vía sin pavimentar, ¿tiene prioridad sobre uno en vía pavimentada?', opts:['Sí, siempre','No, el de la vía pavimentada tiene prioridad','Depende del tamaño del vehículo'], ans:1, tip:'Los vehículos en vía pavimentada tienen prioridad sobre los que circulan por vía sin pavimentar.' },
+  { cat:'prioridad', q:'¿Quién tiene prioridad en una glorieta?', opts:['El que entra a la glorieta','El que ya circula dentro de la glorieta','El que viene por la derecha'], ans:1, tip:'Los vehículos que ya circulan dentro de una glorieta tienen prioridad sobre los que pretenden entrar.' },
+  { cat:'prioridad', q:'En un estrechamiento donde no pueden pasar dos vehículos, ¿quién tiene prioridad?', opts:['El vehículo más ligero','El que haya entrado primero','El que sube la pendiente'], ans:1, tip:'En estrechamientos donde no puedan pasar dos vehículos simultáneamente, tiene prioridad el vehículo que haya entrado primero.' },
+  { cat:'prioridad', q:'En un tramo de gran pendiente donde los coches no pueden cruzarse, ¿quién cede el paso?', opts:['El que sube','El que baja','El más pequeño'], ans:1, tip:'En tramos de gran pendiente, tiene prioridad el vehículo que circula en sentido ascendente (subiendo), salvo que tenga un apartadero más cerca.' },
+  { cat:'prioridad', q:'¿Cuándo tienen prioridad los peatones?', opts:['Siempre en cualquier lugar de la vía','En pasos de peatones señalizados y cuando el vehículo gira entrando en otra vía','Solo cuando hay semáforo verde para peatones'], ans:1, tip:'Los peatones tienen prioridad en pasos señalizados, cuando el vehículo gira para entrar en otra vía con peatones cruzando, o cuando el vehículo cruza un arcén con peatones.' },
+  { cat:'prioridad', q:'¿Qué regla se aplica para realizar cualquier maniobra?', opts:['CFM (Carril, Faro, Maniobra)','RSM (Retrovisor, Señalización, Maniobra)','SMS (Señal, Maniobra, Seguridad)'], ans:1, tip:'Para realizar cualquier maniobra se debe aplicar la regla RSM: Retrovisor, Señalización y Maniobra.' },
+
+  // ── PUNTOS ──
+  { cat:'puntos', q:'¿Con cuántos puntos comienza un conductor novel su permiso?', opts:['6 puntos','8 puntos','12 puntos'], ans:1, tip:'Un conductor novel (o que recupera su permiso) empieza con 8 puntos.' },
+  { cat:'puntos', q:'¿Cuántos puntos tiene el permiso tras 2 años sin infracciones?', opts:['10 puntos','12 puntos','14 puntos'], ans:1, tip:'Tras 2 años sin infracciones, el saldo de puntos sube a 12.' },
+  { cat:'puntos', q:'¿Cuál es el máximo de puntos que se puede alcanzar?', opts:['12 puntos','14 puntos','15 puntos'], ans:2, tip:'El saldo máximo de puntos del permiso de conducir es de 15 puntos, que se alcanza tras 8 años sin infracciones.' },
+  { cat:'puntos', q:'¿Cuántos puntos se pierden por usar el teléfono móvil sujetándolo con la mano?', opts:['3 puntos','4 puntos','6 puntos'], ans:2, tip:'Usar el teléfono móvil sujetándolo con la mano conlleva la pérdida de 6 puntos y una multa de 200€.' },
+  { cat:'puntos', q:'¿Cuántos puntos se pierden por no respetar un semáforo en rojo?', opts:['2 puntos','4 puntos','6 puntos'], ans:1, tip:'No respetar señales de prioridad o semáforos conlleva la pérdida de 4 puntos.' },
+  { cat:'puntos', q:'¿Cuántos puntos se pueden recuperar con el curso voluntario de 12 horas?', opts:['Hasta 4 puntos','Hasta 6 puntos','Hasta 8 puntos'], ans:1, tip:'Con el curso de recuperación voluntario de 12 horas se pueden recuperar hasta un máximo de 6 puntos.' },
+  { cat:'puntos', q:'Tras perder todos los puntos, ¿cuánto tiempo debe esperar un conductor general para recuperar el permiso?', opts:['3 meses','6 meses','12 meses'], ans:1, tip:'Tras perder la vigencia del permiso, el conductor debe esperar 6 meses (3 meses para profesionales), hacer un curso de 24 horas y aprobar una prueba teórica.' },
+  { cat:'puntos', q:'¿Cuántos puntos se pierden por llevar detectores de radar?', opts:['2 puntos','3 puntos','4 puntos'], ans:1, tip:'Llevar detectores de radar conlleva la pérdida de 3 puntos.' },
+  { cat:'puntos', q:'¿Cuántos puntos se pierden por no usar el cinturón de seguridad?', opts:['2 puntos','3 puntos','4 puntos'], ans:2, tip:'No utilizar el cinturón de seguridad, el casco o sistemas de retención infantil supone la pérdida de 4 puntos.' },
+  { cat:'puntos', q:'¿Quién es responsable de los puntos si el pasajero no lleva cinturón?', opts:['El conductor siempre','El propio pasajero','El titular del vehículo'], ans:1, tip:'El propio pasajero es responsable si él mismo no lleva puesto el cinturón de seguridad.' },
+  { cat:'puntos', q:'¿Cuántos puntos pierde un conductor si no respeta la distancia de 1,5 m al adelantar a ciclistas?', opts:['3 puntos','4 puntos','6 puntos'], ans:2, tip:'No respetar la distancia mínima de 1,5 metros al adelantar a ciclistas supone una pérdida de 6 puntos.' },
+  { cat:'puntos', q:'¿Cuántos puntos se pueden perder como máximo en un mismo día (regla general)?', opts:['4 puntos','6 puntos','8 puntos'], ans:2, tip:'Como norma general se pueden perder un máximo de 8 puntos al día, salvo que se cometan infracciones muy graves.' },
+
+  // ── ALCOHOL ──
+  { cat:'alcohol', q:'¿Cuál es el límite de alcoholemia para conductores en general (aire espirado)?', opts:['0,15 mg/l','0,25 mg/l','0,50 mg/l'], ans:1, tip:'El límite para conductores en general es de 0,25 mg/l en aire espirado o 0,50 g/l en sangre.' },
+  { cat:'alcohol', q:'¿Cuál es el límite de alcoholemia para conductores noveles (aire espirado)?', opts:['0,10 mg/l','0,15 mg/l','0,25 mg/l'], ans:1, tip:'Conductores noveles (primeros 2 años) y profesionales tienen un límite más restrictivo: 0,15 mg/l en aire espirado.' },
+  { cat:'alcohol', q:'¿En cuánto tiempo alcanza el alcohol su nivel máximo en el organismo?', opts:['10-20 minutos','30-90 minutos','2-3 horas'], ans:1, tip:'El alcohol alcanza su nivel máximo en el organismo entre 30 y 90 minutos después de la última ingesta.' },
+  { cat:'alcohol', q:'¿Qué efecto visual produce el alcohol en la conducción?', opts:['Aumenta el campo visual','Provoca el efecto túnel (disminuye el campo visual)','Mejora la visión nocturna'], ans:1, tip:'El alcohol produce el llamado "efecto túnel", que disminuye el campo visual del conductor.' },
+  { cat:'alcohol', q:'¿Cuántos puntos se pierden por duplicar la tasa de alcohol permitida?', opts:['4 puntos','6 puntos','8 puntos'], ans:1, tip:'Duplicar la tasa de alcohol permitida o negarse a realizar las pruebas conlleva la pérdida de 6 puntos.' },
+  { cat:'alcohol', q:'¿Están obligados los ciclistas a someterse a pruebas de alcoholemia?', opts:['No, solo los conductores de vehículos a motor','Sí, todos los conductores y ciclistas','Solo si están implicados en un accidente'], ans:1, tip:'Todos los conductores de vehículos y bicicletas están obligados a someterse a las pruebas de detección de alcohol cuando sean requeridos.' },
+  { cat:'alcohol', q:'¿Cuántos puntos se pierden por conducir bajo los efectos de drogas?', opts:['4 puntos','6 puntos','8 puntos'], ans:1, tip:'Conducir bajo los efectos de drogas supone la pérdida de 6 puntos, además de las consecuencias penales que correspondan.' },
+  { cat:'alcohol', q:'¿Pueden los agentes inmovilizar el vehículo si el conductor da positivo en alcoholemia?', opts:['No, solo pueden multar','Sí, pueden proceder a la inmovilización','Solo si el conductor reincide'], ans:1, tip:'Los agentes pueden proceder a la inmovilización del vehículo si el conductor da positivo en alcoholemia o se niega a someterse a la prueba.' },
+
+  // ── EXAMEN DGT ──
+  { cat:'examen', q:'¿Cuántas preguntas tiene el examen teórico del permiso B?', opts:['20 preguntas','25 preguntas','30 preguntas'], ans:2, tip:'El examen teórico del permiso B consta de 30 preguntas tipo test.' },
+  { cat:'examen', q:'¿Cuántos fallos máximos se permiten para aprobar el examen teórico?', opts:['2 fallos','3 fallos','4 fallos'], ans:1, tip:'Para aprobar se permite un máximo de 3 errores (hay que responder correctamente al menos 27 de 30 preguntas).' },
+  { cat:'examen', q:'¿Cuánto tiempo se dispone para realizar el examen teórico?', opts:['20 minutos','30 minutos','45 minutos'], ans:1, tip:'Se dispone de 30 minutos para completar el examen teórico del permiso B.' },
+  { cat:'examen', q:'¿Cuántas oportunidades da el pago de tasas del examen?', opts:['Una sola oportunidad','Dos oportunidades','Tres oportunidades'], ans:1, tip:'El pago de las tasas da derecho a dos oportunidades: dos suspensos permitidos entre el teórico y el práctico.' },
+  { cat:'examen', q:'Una vez aprobado el examen teórico, ¿cuánto tiempo se tiene para aprobar el práctico?', opts:['1 año','2 años','3 años'], ans:1, tip:'El aprobado teórico tiene una vigencia de 2 años para aprobar el examen práctico.' },
+  { cat:'examen', q:'¿Es el examen teórico igual para autoescuela que por libre?', opts:['No, el de libre es más difícil','Sí, el examen es el mismo para ambas modalidades','Solo difiere en el número de preguntas'], ans:1, tip:'El examen teórico es exactamente igual en toda España, independientemente de si se realiza a través de autoescuela o por libre.' },
+
+  // ── NORMATIVA 2026 ──
+  { cat:'normativa', q:'En 2026, ¿pueden las motocicletas circular por el arcén derecho en retenciones?', opts:['No, está prohibido','Sí, pero sin superar 30 km/h y respetando bicicletas','Sí, a cualquier velocidad'], ans:1, tip:'En 2026 se permite a las motocicletas circular por el arcén derecho en retenciones, sin superar los 30 km/h y respetando a las bicicletas.' },
+  { cat:'normativa', q:'En 2026, los vehículos con etiqueta ambiental solos, ¿pueden usar el carril VAO?', opts:['Sí, sin restricciones','Sí, pero solo en horas valle','No, el carril VAO se restringe a vehículos con 2+ ocupantes, motos y transporte público'], ans:2, tip:'En 2026 el carril VAO se restringe a vehículos con al menos dos ocupantes, motocicletas y transporte público, excluyendo turismos solos aunque llevan etiqueta ambiental.' },
+  { cat:'normativa', q:'¿Dónde deben colocarse los triángulos de emergencia tradicionales desde 2026?', opts:['Siguen igual, delante y detrás del vehículo','Son sustituidos definitivamente por la señal V-16','Deben llevarse siempre dos delante'], ans:1, tip:'Desde el 1 de enero de 2026, la señal V-16 sustituye definitivamente a los triángulos de preseñalización de peligro.' },
+  { cat:'normativa', q:'¿Cuál es la nueva norma al adelantar vehículos detenidos en la calzada o arcén en 2026?', opts:['Reducir 10 km/h','Reducir al menos 20 km/h por debajo del límite','Parar completamente'], ans:1, tip:'En 2026, es obligatorio reducir la velocidad en al menos 20 km/h por debajo del límite al adelantar ciclistas o vehículos detenidos en calzada o arcén.' },
+
+  // ── SEGURIDAD VIAL ──
+  { cat:'seguridad', q:'¿Para qué está reservado el arcén de las carreteras?', opts:['Para vehículos lentos','Para peatones, animales, ciclos, ciclomotores y PMR','Para aparcamiento de emergencia únicamente'], ans:1, tip:'El arcén está reservado para peatones, animales, ciclos, ciclomotores y vehículos para personas de movilidad reducida (PMR).' },
+  { cat:'seguridad', q:'¿Cuál es la regla básica de circulación en España?', opts:['Circular por el centro de la calzada','Circular por la derecha','Circular siempre por el carril lento'], ans:1, tip:'La regla básica de circulación es mantenerse por la derecha de la calzada.' },
+  { cat:'seguridad', q:'¿Cuántos puntos se pierden por tirar objetos a la vía que puedan causar incendios?', opts:['3 puntos','4 puntos','6 puntos'], ans:2, tip:'Tirar objetos a la vía que puedan causar incendios o accidentes (como cigarrillos) supone la pérdida de 6 puntos.' },
+  { cat:'seguridad', q:'¿Cuántos puntos se pierden por usar auriculares mientras se conduce?', opts:['2 puntos','3 puntos','4 puntos'], ans:1, tip:'Utilizar auriculares o dispositivos similares mientras se conduce conlleva la pérdida de 3 puntos.' },
+  { cat:'seguridad', q:'¿El conductor es responsable si su acompañante menor no lleva puesto el casco?', opts:['No, el menor es el responsable','Sí, el conductor es el responsable de los menores','Los padres siempre son responsables en cualquier caso'], ans:1, tip:'El conductor es el responsable si los pasajeros o menores no usan el casco o la silla infantil.' },
+  { cat:'seguridad', q:'¿Cuántos puntos se pierden por realizar una conducción temeraria?', opts:['4 puntos','6 puntos','8 puntos'], ans:1, tip:'La conducción temeraria conlleva la pérdida de 6 puntos y puede tener consecuencias penales.' },
+];
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+let state = {
+  mode: 'exam',
+  selectedCats: new Set(CATEGORIES.map(c => c.id)),
+  questions: [],
+  idx: 0,
+  correct: 0,
+  wrong: 0,
+  answered: false,
+  history: [],
+  timerInterval: null,
+  timeLeft: 30,
+};
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+function init() {
+  const grid = document.getElementById('cat-grid');
+  CATEGORIES.forEach(cat => {
+    const div = document.createElement('div');
+    div.className = 'cat-card active';
+    div.dataset.id = cat.id;
+    div.innerHTML = `<span class="ci">${cat.icon}</span><h3>${cat.label}</h3><span>${QUESTIONS.filter(q=>q.cat===cat.id).length} preguntas</span>`;
+    div.onclick = () => toggleCat(div, cat.id);
+    grid.appendChild(div);
+  });
+}
+
+function toggleCat(el, id) {
+  if (state.selectedCats.has(id)) {
+    if (state.selectedCats.size <= 1) return;
+    state.selectedCats.delete(id);
+    el.classList.remove('active');
+  } else {
+    state.selectedCats.add(id);
+    el.classList.add('active');
+  }
+}
+
+function selectMode(el) {
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  state.mode = el.dataset.mode;
+}
+
+// ─── GAME FLOW ────────────────────────────────────────────────────────────────
+function shuffle(arr) { return [...arr].sort(() => Math.random() - 0.5); }
+
+function startGame() {
+  clearInterval(state.timerInterval);
+  let pool = QUESTIONS.filter(q => state.selectedCats.has(q.cat));
+  pool = shuffle(pool);
+  const count = state.mode === 'exam' ? 30 : state.mode === 'blitz' ? 10 : Math.min(pool.length, 30);
+  state.questions = pool.slice(0, Math.min(count, pool.length));
+  state.idx = 0; state.correct = 0; state.wrong = 0;
+  state.history = [];
+  showScreen('quiz');
+  renderQuestion();
+}
+
+function showScreen(name) {
+  ['home','quiz','result'].forEach(s => {
+    document.getElementById('screen-'+s).style.display = s === name ? 'block' : 'none';
+  });
+}
+
+function renderQuestion() {
+  const q = state.questions[state.idx];
+  const total = state.questions.length;
+  state.answered = false;
+
+  document.getElementById('prog-bar').style.width = `${(state.idx/total)*100}%`;
+  document.getElementById('quiz-counter').textContent = `${state.idx+1} / ${total}`;
+  document.getElementById('sc-correct').textContent = state.correct;
+  document.getElementById('sc-wrong').textContent = state.wrong;
+
+  const catMeta = CATEGORIES.find(c => c.id === q.cat);
+  document.getElementById('q-category').textContent = `${catMeta.icon} ${catMeta.label}`;
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('explanation').style.display = 'none';
+  document.getElementById('next-btn').style.display = 'none';
+
+  const optList = document.getElementById('options-list');
+  optList.innerHTML = '';
+  const keys = ['A','B','C','D'];
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<span class="opt-key">${keys[i]}</span> ${opt}`;
+    btn.onclick = () => selectAnswer(i);
+    optList.appendChild(btn);
+  });
+
+  // Fade-in effect
+  const card = document.getElementById('question-card');
+  card.classList.remove('fade-in');
+  void card.offsetWidth;
+  card.classList.add('fade-in');
+
+  // Timer
+  const timerWrap = document.getElementById('timer-wrap');
+  if (state.mode === 'blitz') {
+    timerWrap.style.display = 'block';
+    startTimer();
+  } else {
+    timerWrap.style.display = 'none';
+  }
+}
+
+function startTimer() {
+  clearInterval(state.timerInterval);
+  state.timeLeft = 20;
+  updateTimerUI();
+  state.timerInterval = setInterval(() => {
+    state.timeLeft--;
+    updateTimerUI();
+    if (state.timeLeft <= 0) {
+      clearInterval(state.timerInterval);
+      if (!state.answered) autoSkip();
+    }
+  }, 1000);
+}
+
+function updateTimerUI() {
+  const ring = document.getElementById('timer-ring');
+  const txt  = document.getElementById('timer-txt');
+  const max = 20, circ = 150.8;
+  const pct = state.timeLeft / max;
+  ring.style.strokeDashoffset = circ * (1 - pct);
+  ring.style.stroke = pct > 0.5 ? 'var(--primary)' : pct > 0.25 ? 'var(--warn)' : 'var(--danger)';
+  txt.textContent = state.timeLeft;
+}
+
+function autoSkip() {
+  state.answered = true;
+  const q = state.questions[state.idx];
+  state.wrong++;
+  const btns = document.querySelectorAll('.option-btn');
+  btns.forEach((b,i) => {
+    b.classList.add('answered');
+    if (i === q.ans) b.classList.add('correct');
+    else b.classList.add('skipped');
+  });
+  const exp = document.getElementById('explanation');
+  exp.innerHTML = `<strong>⏰ Tiempo agotado.</strong> ${q.tip}`;
+  exp.style.display = 'block';
+  document.getElementById('next-btn').style.display = 'block';
+  state.history.push({ q: q.q, correct: q.opts[q.ans], yours: 'Sin respuesta', ok: false });
+  document.getElementById('sc-wrong').textContent = state.wrong;
+}
+
+function selectAnswer(chosen) {
+  if (state.answered) return;
+  clearInterval(state.timerInterval);
+  state.answered = true;
+  const q = state.questions[state.idx];
+  const ok = chosen === q.ans;
+  if (ok) state.correct++; else state.wrong++;
+
+  const btns = document.querySelectorAll('.option-btn');
+  btns.forEach((b,i) => {
+    b.classList.add('answered');
+    if (i === q.ans) b.classList.add('correct');
+    else if (i === chosen && !ok) b.classList.add('wrong');
+    else b.classList.add('skipped');
+  });
+
+  const exp = document.getElementById('explanation');
+  exp.innerHTML = (ok ? '✅ <strong>¡Correcto!</strong> ' : '❌ <strong>Incorrecto.</strong> ') + q.tip;
+  exp.style.display = 'block';
+  document.getElementById('next-btn').style.display = 'block';
+
+  document.getElementById('sc-correct').textContent = state.correct;
+  document.getElementById('sc-wrong').textContent = state.wrong;
+
+  state.history.push({ q: q.q, correct: q.opts[q.ans], yours: q.opts[chosen], ok });
+}
+
+function nextQuestion() {
+  state.idx++;
+  if (state.idx >= state.questions.length) {
+    showResult();
+  } else {
+    renderQuestion();
+  }
+}
+
+function showResult() {
+  clearInterval(state.timerInterval);
+  showScreen('result');
+  const total = state.questions.length;
+  const pct = Math.round((state.correct / total) * 100);
+  const isExam = state.mode === 'exam';
+  const passed = isExam ? state.wrong <= 3 : pct >= 70;
+
+  document.getElementById('res-icon').textContent = passed ? '🏆' : '📚';
+  document.getElementById('res-title').textContent = passed ? '¡Aprobado!' : 'Sigue estudiando';
+  document.getElementById('res-sub').textContent = passed
+    ? '¡Enhorabuena! Has superado el test con éxito.'
+    : 'No te rindas. ¡Repasa los temas fallados y vuelve a intentarlo!';
+  document.getElementById('res-pct').textContent  = pct + '%';
+  document.getElementById('res-pct2').textContent = pct + '%';
+  document.getElementById('res-corr').textContent = state.correct;
+  document.getElementById('res-err').textContent  = state.wrong;
+
+  const verdict = document.getElementById('res-verdict');
+  verdict.textContent = passed
+    ? (isExam ? `✅ Aprobado (${state.wrong} error${state.wrong!==1?'s':''} de 3 permitidos)` : '✅ ¡Bien hecho!')
+    : (isExam ? `❌ Suspendido (${state.wrong} errores, máximo permitido: 3)` : '❌ Necesitas más estudio');
+  verdict.className = 'verdict ' + (passed ? 'pass' : 'fail');
+
+  setTimeout(() => {
+    document.getElementById('res-bar').style.width = pct + '%';
+  }, 100);
+
+  // Review section
+  const rev = document.getElementById('review-list');
+  const wrong = state.history.filter(h => !h.ok);
+  rev.innerHTML = '';
+  if (wrong.length > 0) {
+    const hdr = document.createElement('div');
+    hdr.className = 'review-header';
+    hdr.textContent = `❌ Preguntas falladas (${wrong.length})`;
+    rev.appendChild(hdr);
+    wrong.forEach(h => {
+      const d = document.createElement('div');
+      d.className = 'review-item';
+      d.innerHTML = `<div class="ri-q">📝 ${h.q}</div><div class="ri-a">✅ Correcta: ${h.correct}</div><div class="ri-y">❌ Tu respuesta: ${h.yours}</div>`;
+      rev.appendChild(d);
+    });
+  }
+}
+
+function goHome() {
+  clearInterval(state.timerInterval);
+  showScreen('home');
+}
+
+init();
+</script>
+</body>
+</html>
